@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../provider/AuthProvider';
+import { Helmet } from 'react-helmet';
 
 const BorrowedBooks = () => {
   const { user } = useContext(AuthContext); // Fetching user from AuthContext
@@ -12,7 +13,7 @@ const BorrowedBooks = () => {
       if (!userEmail) return; // Return if user email is not available
       try {
         const response = await axios.get('http://localhost:3000/borrowedBooks', {
-          params: { email: userEmail }, // Pass user email as a query parameter
+          params: { email: userEmail }, withCredentials: true // Pass user email as a query parameter
         });
         setBorrowedBooks(response.data);
       } catch (error) {
@@ -39,6 +40,10 @@ const BorrowedBooks = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <Helmet>
+        <title>Borrowed Books - Your Library</title>
+      </Helmet>
+
       <h1 className="text-2xl font-bold mb-4">Your Borrowed Books</h1>
       {borrowedBooks.length === 0 ? (
         <p>No borrowed books found.</p>

@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthProvider';
+import axios from 'axios';
 
 const Login = () => {
   const { signInUser, signInWithGoogle } = useContext(AuthContext);
@@ -24,6 +25,10 @@ const Login = () => {
     try {
       const result = await signInUser(email, password);
       console.log('Signed in user:', result.user);
+      axios.post('http://localhost:3000/jwt', result.user, { withCredentials: true })
+      .then(res => {
+        console.log(res.data);
+      })
       navigate(from);
     } catch (err) {
       setError(err.message);
@@ -31,26 +36,33 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    signInWithGoogle()
-    .then(result=> {
-      console.log(result.user)
-      navigate(from);
-    })
-    .catch(error => {
-      console.log(error.message)
-    })
+  const handleGoogleSignIn = async () => {
     setError('');
-
-    // Add Firebase Google sign-in logic here
-    // Example: Firebase Google auth provider
-    // const provider = new firebase.auth.GoogleAuthProvider();
-    // firebase.auth().signInWithPopup(provider)
-    //   .then(result => { ... })
-    //   .catch(err => { setError(err.message); });
-
-    console.log('Google sign-in initiated');
+    try {
+      const result = await signInWithGoogle();
+      const user = result.user; // Get user information from the result
+  
+      console.log(user); // Log user data for debugging
+  
+      // Create an object with the user data you want to send to your backend
+      const userData = {
+        email: user.email,
+        // Add other fields as necessary (e.g., profile picture URL)
+        // For example: profilePicture: user.photoURL,
+      };
+  
+      // Send the user data to your backend to store
+      const response = await axios.post('http://localhost:3000/users', userData, { withCredentials: true });
+      console.log('User data stored:', response.data); // Log the response
+  
+      // Navigate to the desired route after successful login
+      navigate(from);
+    } catch (error) {
+      console.log(error.message);
+      setError(error.message); // Set error message to state for displaying
+    }
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AllBooksCard from '../components/AllBooksCard';
+import { Helmet } from 'react-helmet';
 
 const AllBooks = () => {
   const [books, setBooks] = useState([]);
@@ -52,6 +53,10 @@ const AllBooks = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <Helmet>
+        <title>All Books - Book Collection</title>  
+      </Helmet>
+
       <h1 className="text-3xl font-bold text-center mb-6">All Books</h1>
 
       {/* Sorting Options */}
