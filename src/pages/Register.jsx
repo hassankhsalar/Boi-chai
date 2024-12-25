@@ -1,9 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthProvider';
 
 const Register = () => {
     const { createUser, signInWithGoogle } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state || '/';
 
     const [formData, setFormData] = useState({
         name: '',
@@ -20,36 +23,54 @@ const Register = () => {
     };
 
     const handleRegister = (e) => {
-        e.preventDefault();
-        setError('');
-        setPasswordError('');
-
-        createUser(formData.email, formData.password)
-            .then((result) => {
-                console.log(result.user);
+      e.preventDefault();
+      setError('');
+    
+      const user = {
+        name: formData.name,
+        email: formData.email,
+        photoURL: formData.photoURL,
+      };
+    
+      createUser(user.email, formData.password) // Still required for Firebase Auth
+        .then((result) => {
+          console.log('Firebase user created:', result.user);
+    
+          // Save to MongoDB
+          fetch('http://localhost:3000/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                console.log('User saved to MongoDB:', data);
+                navigate(from);
+              } else {
+                setError(data.error);
+                console.error('MongoDB error:', data.error);
+              }
             })
-            .catch((error) => {
-                setError(error.message);
-                console.log(error.message);
-            });
+            .catch((error) => console.error('MongoDB error:', error));
+        })
+        .catch((error) => {
+          setError(error.message);
+          console.log('Firebase error:', error.message);
+        });
     };
 
   const handleGoogleSignIn = () => {
     signInWithGoogle()
     .then(result=> {
       console.log(result.user)
+      navigate(from);
     })
     .catch(error => {
       console.log(error.message)
     })
     setError('');
 
-    // Add Firebase Google sign-in logic here
-    // Example: Firebase Google auth provider
-    // const provider = new firebase.auth.GoogleAuthProvider();
-    // firebase.auth().signInWithPopup(provider)
-    //   .then(result => { ... })
-    //   .catch(err => { setError(err.message); });
 
     console.log('Google sign-in initiated');
   };

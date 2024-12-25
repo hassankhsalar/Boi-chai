@@ -1,27 +1,40 @@
 import logo from '../assets/logo.jpg';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../provider/AuthProvider';
 
 const Navbar = () => {
-
   const { user, signOutUser } = useContext(AuthContext);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    if (user?.email) {
+      fetch(`http://localhost:3000/users/${user.email}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setUserData(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching user data:', error);
+        });
+    }
+  }, [user]);
 
   const handleSignOut = () => {
     signOutUser()
-    .then(() =>{
-      console.log('successful logout')
-    })
-    .catch(error => {
-      console.log('failed to logout')
-    })
-  }
+      .then(() => {
+        console.log('Successfully logged out');
+      })
+      .catch((error) => {
+        console.log('Failed to log out:', error);
+      });
+  };
 
   return (
     <div className="navbar bg-base-100 rounded-2xl">
       <div className="navbar-start">
-        <img className='w-20' src={logo} alt="Logo" />
+        <img className="w-20" src={logo} alt="Logo" />
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg
@@ -29,44 +42,62 @@ const Navbar = () => {
               className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor">
+              stroke="currentColor"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16" />
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
             </svg>
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+          >
             <li><Link to="/">Home</Link></li>
-          <li><Link to="/">Add Book</Link></li>
-          <li><Link to="/allbooks">All Books</Link></li>
-          <li><Link to="/">Borrowed Books</Link></li>
+            <li><Link to="/addbook">Add Book</Link></li>
+            <li><Link to="/allbooks">All Books</Link></li>
+            <li><Link to="/">Borrowed Books</Link></li>
           </ul>
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal text-base font-semibold px-1">
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/">Add Book</Link></li>
+          <li><Link to="/addbook">Add Book</Link></li>
           <li><Link to="/allbooks">All Books</Link></li>
           <li><Link to="/">Borrowed Books</Link></li>
         </ul>
       </div>
       <div className="navbar-end gap-3">
-        {
-          user ? <> <button onClick={handleSignOut} className='btn'>Log Out</button></> : <><div className="flex items-center gap-4">
-          <FaUserCircle className="w-full h-full" />
-          </div>
-          <div className='flex gap-3'>
-              <Link to='/register'>Register</Link>
-              <Link to='/login'>Login</Link>
-          </div></>
-        }
-        
-        
+        {user ? (
+          <>
+            <div className="tooltip tooltip-bottom" data-tip={userData?.name || user.email}>
+              {userData?.photoURL ? (
+                <img
+                  src={userData.photoURL}
+                  alt="User"
+                  className="w-12 h-12 rounded-full object-cover border"
+                />
+              ) : (
+                <FaUserCircle className="w-12 h-12" />
+              )}
+            </div>
+            <button onClick={handleSignOut} className="btn">Log Out</button>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-4">
+              <FaUserCircle className="w-full h-full" />
+            </div>
+            <div className="flex gap-3">
+              <Link to="/register">Register</Link>
+              <Link to="/login">Login</Link>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
