@@ -59,7 +59,7 @@ const Navbar = () => {
             <li><Link to="/">Home</Link></li>
             <li><Link to="/addbook">Add Book</Link></li>
             <li><Link to="/allbooks">All Books</Link></li>
-            <li><Link to="/">Borrowed Books</Link></li>
+            <li><Link to="/borrowedbooks">Borrowed Books</Link></li>
           </ul>
         </div>
       </div>
@@ -68,7 +68,7 @@ const Navbar = () => {
           <li><Link to="/">Home</Link></li>
           <li><Link to="/addbook">Add Book</Link></li>
           <li><Link to="/allbooks">All Books</Link></li>
-          <li><Link to="/">Borrowed Books</Link></li>
+          <li><Link to="/borrowedbooks">Borrowed Books</Link></li>
         </ul>
       </div>
       <div className="navbar-end gap-3">

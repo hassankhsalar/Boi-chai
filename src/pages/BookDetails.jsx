@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../provider/AuthProvider';
 
 const BookDetails = () => {
-  const { image, name, quantity, authorName, category, shortDescription, rating } = useLoaderData();
+  const { _id, image, name, quantity, authorName, category, shortDescription, rating } = useLoaderData();
 
+  const { user } = useContext(AuthContext); // Get the user from AuthContext
   const [showModal, setShowModal] = useState(false);
   const [returnDate, setReturnDate] = useState('');
   const isDisabled = quantity === 0;
@@ -13,12 +16,51 @@ const BookDetails = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(`Borrowed ${name} with return date: ${returnDate}`);
-    // Add your API call or logic here to update the database
-    setShowModal(false);
+  
+    if (!user || !user.email) {
+      console.error('User is not authenticated');
+      return;
+    }
+  
+    try {
+      // Log the request data
+      console.log('Request Data:', {
+        bookId: _id,
+        returnDate,
+        user: {
+          name: user.displayName || 'Anonymous',
+          email: user.email,
+        },
+        image, // Include the image URL in the request data
+      });
+  
+      // Make an API call to borrow the book
+      await axios.post('http://localhost:3000/borrow', {
+        bookId: _id,
+        returnDate,
+        user: {
+          name: user.displayName || 'Anonymous',
+          email: user.email,
+        },
+        image, // Send the image along with the borrow request
+      });
+  
+      // Update the book quantity in the database
+      await axios.patch(`http://localhost:3000/books/${_id}`, {
+        quantity: quantity - 1,
+      });
+  
+      console.log(`Borrowed ${name} with return date: ${returnDate}`);
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error borrowing the book:', error);
+    }
   };
+  
+  
+  
 
   return (
     <div className="container mx-auto p-4">
@@ -73,6 +115,25 @@ const BookDetails = () => {
                   onChange={(e) => setReturnDate(e.target.value)}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
+                />
+              </div>
+              {/* Display user information */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Name:</label>
+                <input
+                  type="text"
+                  value={user?.displayName || 'Anonymous'}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  readOnly
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Email:</label>
+                <input
+                  type="email"
+                  value={user?.email || ''}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  readOnly
                 />
               </div>
               <div className="flex justify-end gap-4">

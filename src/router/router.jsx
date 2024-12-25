@@ -12,6 +12,7 @@ import UpdateBook from "../pages/UpdateBook";
 import AddBook from "../pages/AddBook";
 import NotFound from "../pages/NotFound";
 import CategoryPage from "../pages/CategoryPage";
+import BorrowedBooks from "../pages/BorrowedBooks";
 
   const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ import CategoryPage from "../pages/CategoryPage";
         {
           path: '/addbook',
           element: <PrivateRoute><AddBook></AddBook></PrivateRoute>
+        },
+        {
+          path: '/borrowedbooks',
+          element: <PrivateRoute><BorrowedBooks></BorrowedBooks></PrivateRoute>
         },
         {
           path: '/update-book/:id',
