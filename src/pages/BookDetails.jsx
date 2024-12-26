@@ -38,7 +38,7 @@ const BookDetails = () => {
       });
 
       // Make an API call to borrow the book
-      await axios.post('http://localhost:3000/borrow', {
+      await axios.post('https://boi-chai-serverside.vercel.app/borrow', {
         bookId: _id,
         returnDate,
         user: {
@@ -49,7 +49,7 @@ const BookDetails = () => {
       });
 
       // Update the book quantity in the database
-      await axios.patch(`http://localhost:3000/books/${_id}`, {
+      await axios.patch(`https://boi-chai-serverside.vercel.app/books/${_id}`, {
         quantity: quantity - 1,
       });
 

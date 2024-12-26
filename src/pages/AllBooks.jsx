@@ -9,14 +9,19 @@ const AllBooks = () => {
   const [selectedRating, setSelectedRating] = useState('All');
   const [showAvailable, setShowAvailable] = useState(false); 
   const [viewType, setViewType] = useState('Card'); 
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
-    fetch('https://boi-chai-serverside.vercel.app/books') 
-      .then((res) => res.json())
-      .then((data) => {
-        setBooks(data);
-        setFilteredBooks(data);
-      });
+    setLoading(true); 
+    setTimeout(() => { 
+      fetch('https://boi-chai-serverside.vercel.app/books')
+        .then((res) => res.json())
+        .then((data) => {
+          setBooks(data);
+          setFilteredBooks(data);
+          setLoading(false); 
+        });
+    }, 500);
   }, []);
 
   useEffect(() => {
@@ -42,14 +47,8 @@ const AllBooks = () => {
 
   const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
   const handleRatingChange = (e) => setSelectedRating(e.target.value);
-  
-  const toggleAvailableBooks = () => {
-    setShowAvailable((prev) => !prev);
-  };
-
-  const handleViewChange = (e) => {
-    setViewType(e.target.value);
-  };
+  const toggleAvailableBooks = () => setShowAvailable((prev) => !prev);
+  const handleViewChange = (e) => setViewType(e.target.value);
 
   return (
     <div className="container mx-auto p-4">
@@ -128,8 +127,12 @@ const AllBooks = () => {
         </div>
       </div>
 
-      {/* Book Display Area */}
-      {viewType === 'Card' ? (
+      {/* Loading Spinner */}
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+        </div>
+      ) : viewType === 'Card' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBooks.length > 0 ? (
             filteredBooks.map((book) => (
