@@ -16,6 +16,7 @@ const BorrowedBooks = () => {
           params: { email: userEmail }, withCredentials: true // Pass user email as a query parameter
         });
         setBorrowedBooks(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching borrowed books:', error);
       }
@@ -28,9 +29,9 @@ const BorrowedBooks = () => {
     try {
       // Remove the borrowed book
       await axios.delete(`http://localhost:3000/borrowedBooks/${bookId}`, {
-        data: { email: userEmail }, // Send user email for identification
+        data: { userEmail }, // Ensure key matches backend expectations
       });
-
+  
       // Update the local state to remove the returned book
       setBorrowedBooks(borrowedBooks.filter((book) => book.bookId !== bookId));
     } catch (error) {
