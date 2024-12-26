@@ -8,16 +8,16 @@ const UpdateBook = () => {
   const [book, setBook] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/books/${id}`)
+    fetch(`https://boi-chai-serverside.vercel.app/books/${id}`)
       .then((res) => res.json())
       .then((data) => setBook(data));
   }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submitting Updated Data:', book); // Debug
+    console.log('Submitting Updated Data:', book); 
   
-    fetch(`http://localhost:3000/books/${id}`, {
+    fetch(`https://boi-chai-serverside.vercel.app/books/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(book),

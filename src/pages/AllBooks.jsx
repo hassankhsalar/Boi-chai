@@ -7,11 +7,11 @@ const AllBooks = () => {
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedRating, setSelectedRating] = useState('All');
-  const [showAvailable, setShowAvailable] = useState(false); // State to track available books
-  const [viewType, setViewType] = useState('Card'); // State for the view type
+  const [showAvailable, setShowAvailable] = useState(false); 
+  const [viewType, setViewType] = useState('Card'); 
 
   useEffect(() => {
-    fetch('http://localhost:3000/books') // Update with your backend API URL
+    fetch('https://boi-chai-serverside.vercel.app/books') 
       .then((res) => res.json())
       .then((data) => {
         setBooks(data);

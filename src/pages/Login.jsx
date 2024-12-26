@@ -28,15 +28,14 @@ const Login = () => {
 
       // Request a JWT token
       const response = await axios.post(
-        'http://localhost:3000/jwt',
+        'https://boi-chai-serverside.vercel.app/jwt',
         { email: user.email },
         { withCredentials: true }
       );
 
       const token = response.data.token;
-      localStorage.setItem('authToken', token); // Store token securely
+      localStorage.setItem('authToken', token); 
 
-      // Redirect to the intended page
       navigate(from, { replace: true });
     } catch (err) {
       setError('Invalid email or password. Please try again.');
@@ -45,13 +44,12 @@ const Login = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    setError(''); // Clear error messages
+    setError(''); 
   
     try {
-      // Sign in with Google using the provided context method
+      
       await signInWithGoogle();
   
-      // Redirect to the intended page (the one they tried to access before)
       navigate(from, { replace: true });
     } catch (error) {
       setError('Failed to log in with Google. Please try again.');

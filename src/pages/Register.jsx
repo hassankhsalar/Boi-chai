@@ -18,9 +18,10 @@ const Register = () => {
         const photoURL = form.PhotoURL.value;
         const name = form.name.value;
 
-        // Password validation
-        if (password.length < 6) {
-            setPasswordError('Password must be at least 6 characters long.');
+        // Password validation using regex
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+        if (!passwordRegex.test(password)) {
+            setPasswordError('Password must be at least 6 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character.');
             return;
         }
         setPasswordError('');
@@ -30,14 +31,11 @@ const Register = () => {
             const result = await createUser(email, password);
             const user = result.user;
 
-            // Store user in MongoDB without password
             const newUser = { email, name, photoURL };
-            await axios.post('http://localhost:3000/users', newUser);
+            await axios.post('https://boi-chai-serverside.vercel.app/users', newUser);
 
-            // Show success toast
             toast.success('User registered successfully!');
 
-            // Redirect to the home page
             navigate('/');
         } catch (error) {
             console.error('Error creating user:', error.message);
@@ -47,16 +45,16 @@ const Register = () => {
 
     const handleGoogleSignIn = async () => {
       try {
-          // Google sign-in
+          
           const result = await signInWithGoogle();
           const user = result.user;
   
           // Store user in MongoDB without password
           const newUser = { email: user.email, name: user.displayName, photoURL: user.photoURL };
           try {
-              await axios.post('http://localhost:3000/users', newUser);
+              await axios.post('https://boi-chai-serverside.vercel.app/users', newUser);
               toast.success('User registered successfully!');
-              navigate('/'); // Correctly using navigate here
+              navigate('/'); 
           } catch (error) {
               if (error.response && error.response.status === 409) {
                 navigate('/');

@@ -23,7 +23,7 @@ const AddBook = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:3000/books', {
+    fetch('https://boi-chai-serverside.vercel.app/books', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bookData),
@@ -41,7 +41,7 @@ const AddBook = () => {
           icon: 'success',
           confirmButtonText: 'OK',
         }).then(() => {
-          navigate('/allbooks'); // Redirect to the books page after submission
+          navigate('/allbooks'); 
         });
       })
       .catch((error) => {

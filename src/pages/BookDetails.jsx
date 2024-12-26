@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../provider/AuthProvider';
-import { ToastContainer, toast } from 'react-toastify'; // Import Toastify components
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
+import { ToastContainer, toast } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const BookDetails = () => {
   const { _id, image, name, quantity, authorName, category, shortDescription, rating } = useLoaderData();
-  const { user } = useContext(AuthContext); // Get the user from AuthContext
+  const { user } = useContext(AuthContext); 
   const [showModal, setShowModal] = useState(false);
   const [returnDate, setReturnDate] = useState('');
   const isDisabled = quantity === 0;
@@ -54,11 +54,11 @@ const BookDetails = () => {
       });
 
       console.log(`Borrowed ${name} with return date: ${returnDate}`);
-      toast.success(`Successfully borrowed "${name}"!`); // Show success toast notification
+      toast.success(`Successfully borrowed "${name}"!`); 
       setShowModal(false);
     } catch (error) {
       console.error('Error borrowing the book:', error);
-      toast.error('Error borrowing book. Please try again.'); // Show error toast notification
+      toast.error('Error borrowing book. Please try again.'); 
     }
   };
 

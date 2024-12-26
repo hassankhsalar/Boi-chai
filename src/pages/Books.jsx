@@ -5,7 +5,7 @@ const Books = () => {
     const [books, setBooks] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:3000/books')
+        fetch('https://boi-chai-serverside.vercel.app/books')
         .then(res => res.json())
         .then(data => {
             setBooks(data);

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { AuthContext } from '../provider/AuthProvider';
 import { Helmet } from 'react-helmet';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const BorrowedBooks = () => {
   const { user } = useContext(AuthContext);
@@ -14,7 +14,7 @@ const BorrowedBooks = () => {
     const fetchBorrowedBooks = async () => {
       if (!userEmail) return; 
       try {
-        const response = await axios.get('http://localhost:3000/borrowedBooks', {
+        const response = await axios.get('https://boi-chai-serverside.vercel.app/borrowedBooks', {
           params: { email: userEmail },
           withCredentials: true,
         });
@@ -30,17 +30,17 @@ const BorrowedBooks = () => {
 
   const handleReturnBook = async (bookId) => {
     try {
-      await axios.delete(`http://localhost:3000/borrowedBooks/${bookId}`, {
+      await axios.delete(`https://boi-chai-serverside.vercel.app/borrowedBooks/${bookId}`, {
         data: { userEmail },
       });
 
       setBorrowedBooks(borrowedBooks.filter((book) => book.bookId !== bookId));
       
-      // Show success toast notification
+      
       toast.success('Book returned successfully!');
     } catch (error) {
       console.error('Error returning book:', error);
-      toast.error('Error returning book. Please try again.'); // Show error toast notification
+      toast.error('Error returning book. Please try again.'); 
     }
   };
 
@@ -79,7 +79,7 @@ const BorrowedBooks = () => {
         </div>
       )}
       
-      {/* ToastContainer for notifications */}
+      
       <ToastContainer />
     </div>
   );

@@ -1,6 +1,6 @@
-// src/pages/CategoryPage.jsx
+
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 
 const CategoryPage = () => {
@@ -8,20 +8,20 @@ const CategoryPage = () => {
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/books', {
+                const response = await axios.get('https://boi-chai-serverside.vercel.app/books', {
                     params: { category: categoryName }
                 });
-                // Check if response data is an array
+                
                 if (Array.isArray(response.data)) {
                     setBooks(response.data);
                 } else {
                     console.error("Expected an array but received:", response.data);
-                    setBooks([]); // Set to empty array if the response is not valid
+                    setBooks([]); 
                 }
             } catch (err) {
                 setError(err.message);
@@ -43,7 +43,7 @@ const CategoryPage = () => {
     }
 
     const handleDetailsClick = (bookId) => {
-        navigate(`/books/${bookId}`); // Navigate to BookDetails page with the book ID
+        navigate(`/books/${bookId}`); 
     };
 
     return (
@@ -68,7 +68,7 @@ const CategoryPage = () => {
                                 <div className="card-actions">
                                     <button 
                                         className="btn btn-primary btn-sm" 
-                                        onClick={() => handleDetailsClick(book._id)} // Call handleDetailsClick on button click
+                                        onClick={() => handleDetailsClick(book._id)} 
                                     >
                                         Details
                                     </button>

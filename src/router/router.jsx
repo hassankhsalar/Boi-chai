@@ -54,7 +54,7 @@ import BorrowedBooks from "../pages/BorrowedBooks";
         {
           path: '/books/:id',
           element: <PrivateRoute><BookDetails></BookDetails></PrivateRoute>,
-          loader: ({ params }) => fetch(`http://localhost:3000/books/${params.id}`)
+          loader: ({ params }) => fetch(`https://boi-chai-serverside.vercel.app/books/${params.id}`)
         },
       ]
     },
