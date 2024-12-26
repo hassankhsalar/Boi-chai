@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthProvider';
 import axios from 'axios';
 
@@ -9,7 +9,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state || '/';
+  const from = location.state?.from?.pathname || '/';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,47 +24,40 @@ const Login = () => {
 
     try {
       const result = await signInUser(email, password);
-      console.log('Signed in user:', result.user);
-      axios.post('http://localhost:3000/jwt', result.user, { withCredentials: true })
-      .then(res => {
-        console.log(res.data);
-      })
-      navigate(from);
+      const user = result.user;
+
+      // Request a JWT token
+      const response = await axios.post(
+        'http://localhost:3000/jwt',
+        { email: user.email },
+        { withCredentials: true }
+      );
+
+      const token = response.data.token;
+      localStorage.setItem('authToken', token); // Store token securely
+
+      // Redirect to the intended page
+      navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message);
-      console.error(err);
+      setError('Invalid email or password. Please try again.');
+      console.error('Login error:', err);
     }
   };
 
   const handleGoogleSignIn = async () => {
-    setError('');
+    setError(''); // Clear error messages
+
     try {
-      const result = await signInWithGoogle();
-      const user = result.user; // Get user information from the result
-  
-      console.log(user); // Log user data for debugging
-  
-      // Create an object with the user data you want to send to your backend
-      const userData = {
-        email: user.email,
-        name: user.displayName,
-        image: user.photoURL,
-        // Add other fields as necessary (e.g., profile picture URL)
-        // For example: profilePicture: user.photoURL,
-      };
-  
-      // Send the user data to your backend to store
-      const response = await axios.post('http://localhost:3000/users', userData, { withCredentials: true });
-      console.log('User data stored:', response.data); // Log the response
-  
-      // Navigate to the desired route after successful login
-      navigate(from);
+      // Sign in with Google using the provided context method
+      await signInWithGoogle();
+
+      // Redirect to the intended page
+      navigate(from, { replace: true });
     } catch (error) {
-      console.log(error.message);
-      setError(error.message); // Set error message to state for displaying
+      setError('Failed to log in with Google. Please try again.');
+      console.error('Google Sign-In error:', error.message);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">

@@ -1,208 +1,119 @@
 import React, { useContext, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthProvider';
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
     const { createUser, signInWithGoogle } = useContext(AuthContext);
-    const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state || '/';
-
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        photoURL: '',
-        password: '',
-    });
-    const [error, setError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
-        setError('');
+        const form = e.target;
+        const email = form.email.value;
+        const password = form.password.value;
+        const photoURL = form.PhotoURL.value;
+        const name = form.name.value;
 
-        const user = {
-            name: formData.name,
-            email: formData.email,
-            photoURL: formData.photoURL,
-        };
+        // Password validation
+        if (password.length < 6) {
+            setPasswordError('Password must be at least 6 characters long.');
+            return;
+        }
+        setPasswordError('');
 
-        createUser(user.email, formData.password)
-            .then((result) => {
-                console.log('Firebase user created:', result.user);
-
-                fetch('http://localhost:3000/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(user),
-                })
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if (data.success) {
-                            console.log('User saved to MongoDB:', data);
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'You have registered successfully!',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                navigate(from);
-                            });
-                        } else {
-                            setError(data.error);
-                            console.error('MongoDB error:', data.error);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('MongoDB error:', error);
-                        setError('Failed to register user in MongoDB');
-                    });
-            })
-            .catch((error) => {
-                setError(error.message);
-                console.log('Firebase error:', error.message);
-            });
-    };
-
-    const handleGoogleSignIn = async () => {
-        setError('');
         try {
-            const result = await signInWithGoogle();
+            // Create user with email and password
+            const result = await createUser(email, password);
             const user = result.user;
 
-            console.log(user);
+            // Store user in MongoDB without password
+            const newUser = { email, name, photoURL };
+            await axios.post('http://localhost:3000/users', newUser);
 
-            const userData = {
-                email: user.email,
-                name: user.displayName,
-                image: user.photoURL,
-            };
+            // Show success toast
+            toast.success('User registered successfully!');
 
-            const response = await axios.post('http://localhost:3000/users', userData, { withCredentials: true });
-            console.log('User data stored:', response.data);
-
-            navigate(from);
+            // Redirect to the home page
+            navigate('/');
         } catch (error) {
-            console.log(error.message);
-            setError(error.message);
+            console.error('Error creating user:', error.message);
+            toast.error('Failed to register. Please try again.');
         }
     };
 
+    const handleGoogleSignIn = async () => {
+      try {
+          // Google sign-in
+          const result = await signInWithGoogle();
+          const user = result.user;
+  
+          // Store user in MongoDB without password
+          const newUser = { email: user.email, name: user.displayName, photoURL: user.photoURL };
+          try {
+              await axios.post('http://localhost:3000/users', newUser);
+              toast.success('User registered successfully!');
+              navigate('/'); // Correctly using navigate here
+          } catch (error) {
+              if (error.response && error.response.status === 409) {
+                navigate('/');
+                  toast.error('User already exists. try log in instead next time.');
+              } else {
+                  toast.error('Failed to register. Please try again.');
+              }
+          }
+      } catch (error) {
+          console.error('Error with Google sign-in:', error.message);
+          toast.error('Failed to log in with Google. Please try again.');
+      }
+  };
+  
+
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
-            <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold text-center mb-6">Register to Boi-Chai</h2>
-                {error && (
-                    <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-                        {error}
-                    </div>
-                )}
-                <form onSubmit={handleRegister}>
-                    {/* Name Field */}
-                    <div className="mb-4">
-                        <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="Enter your name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-
-                    {/* Email Field */}
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-
-                    {/* Photo URL Field */}
-                    <div className="mb-4">
-                        <label htmlFor="photoURL" className="block text-gray-700 font-medium mb-2">
-                            Photo URL
-                        </label>
-                        <input
-                            type="url"
-                            id="photoURL"
-                            name="photoURL"
-                            placeholder="Enter your photo URL"
-                            value={formData.photoURL}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-
-                    {/* Password Field */}
-                    <div className="mb-4">
-                        <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                        {passwordError && (
-                            <p className="text-red-600 text-sm mt-2">{passwordError}</p>
-                        )}
-                    </div>
-
-                    {/* Register Button */}
-                    <div>
-                        <button
-                            type="submit"
-                            className="w-full mb-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
-                        >
-                            Register
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={handleGoogleSignIn}
-                            className="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
-                        >
-                            Continue with Google
-                        </button>
-                    </div>
-                </form>
-
-                {/* Login Link */}
-                <div className="mt-6 text-center">
-                    <p className="text-gray-700">
-                        Already have an account?{' '}
-                        <Link to="/login" className="text-blue-500 hover:underline">
-                            Login here
-                        </Link>
-                    </p>
+        <div className="hero bg-base-200 min-h-screen">
+            <ToastContainer />
+            <div className="hero-content flex-col lg:flex-row-reverse">
+                <div className="text-center lg:text-left w-96"></div>
+                <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+                    <h1 className="ml-8 mt-4 text-5xl font-bold">Register now!</h1>
+                    <form onSubmit={handleRegister} className="card-body">
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Name</span>
+                            </label>
+                            <input type="text" name="name" placeholder="User Name" className="input input-bordered" required />
+                        </div>
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Email</span>
+                            </label>
+                            <input type="email" name="email" placeholder="Email" className="input input-bordered" required />
+                        </div>
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Photo URL</span>
+                            </label>
+                            <input type="text" name="PhotoURL" placeholder="Photo URL" className="input input-bordered" required />
+                        </div>
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Password</span>
+                            </label>
+                            <input type="password" name="password" placeholder="Password" className="input input-bordered" required />
+                            {passwordError && <p className="text-red-600 text-sm mt-2">{passwordError}</p>}
+                        </div>
+                        <div className="form-control mt-6">
+                            <button className="btn btn-primary">Register</button>
+                        </div>
+                        <div className="form-control mt-6">
+                            <button type="button" onClick={handleGoogleSignIn} className="btn bg-blue-600 text-white">
+                                Login With Google
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
