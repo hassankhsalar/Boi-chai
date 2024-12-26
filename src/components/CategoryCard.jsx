@@ -11,7 +11,7 @@ const CategoryCard = ({ category }) => {
 
     return (
         <div 
-            className="border rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition" 
+            className="border-2 border-blue-300 rounded-2xl p-4 cursor-pointer hover:bg-gray-200 transition" 
             onClick={handleClick}
         >
             <h3 className="text-xl font-semibold text-center">{category.name}</h3>

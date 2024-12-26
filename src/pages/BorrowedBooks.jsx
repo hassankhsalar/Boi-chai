@@ -2,18 +2,21 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../provider/AuthProvider';
 import { Helmet } from 'react-helmet';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 
 const BorrowedBooks = () => {
-  const { user } = useContext(AuthContext); // Fetching user from AuthContext
+  const { user } = useContext(AuthContext);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
-  const userEmail = user?.email; // Use the email directly from the user object
+  const userEmail = user?.email;
 
   useEffect(() => {
     const fetchBorrowedBooks = async () => {
-      if (!userEmail) return; // Return if user email is not available
+      if (!userEmail) return; 
       try {
         const response = await axios.get('http://localhost:3000/borrowedBooks', {
-          params: { email: userEmail }, withCredentials: true // Pass user email as a query parameter
+          params: { email: userEmail },
+          withCredentials: true,
         });
         setBorrowedBooks(response.data);
         console.log(response.data);
@@ -23,19 +26,21 @@ const BorrowedBooks = () => {
     };
 
     fetchBorrowedBooks();
-  }, [userEmail]); // Depend on userEmail
+  }, [userEmail]);
 
   const handleReturnBook = async (bookId) => {
     try {
-      // Remove the borrowed book
       await axios.delete(`http://localhost:3000/borrowedBooks/${bookId}`, {
-        data: { userEmail }, // Ensure key matches backend expectations
+        data: { userEmail },
       });
-  
-      // Update the local state to remove the returned book
+
       setBorrowedBooks(borrowedBooks.filter((book) => book.bookId !== bookId));
+      
+      // Show success toast notification
+      toast.success('Book returned successfully!');
     } catch (error) {
       console.error('Error returning book:', error);
+      toast.error('Error returning book. Please try again.'); // Show error toast notification
     }
   };
 
@@ -73,6 +78,9 @@ const BorrowedBooks = () => {
           ))}
         </div>
       )}
+      
+      {/* ToastContainer for notifications */}
+      <ToastContainer />
     </div>
   );
 };

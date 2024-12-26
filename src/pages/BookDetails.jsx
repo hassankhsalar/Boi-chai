@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../provider/AuthProvider';
+import { ToastContainer, toast } from 'react-toastify'; // Import Toastify components
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
 
 const BookDetails = () => {
   const { _id, image, name, quantity, authorName, category, shortDescription, rating } = useLoaderData();
-
   const { user } = useContext(AuthContext); // Get the user from AuthContext
   const [showModal, setShowModal] = useState(false);
   const [returnDate, setReturnDate] = useState('');
@@ -18,12 +19,12 @@ const BookDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!user || !user.email) {
       console.error('User is not authenticated');
       return;
     }
-  
+
     try {
       // Log the request data
       console.log('Request Data:', {
@@ -33,9 +34,9 @@ const BookDetails = () => {
           name: user.displayName || 'Anonymous',
           email: user.email,
         },
-        image, // Include the image URL in the request data
+        image,
       });
-  
+
       // Make an API call to borrow the book
       await axios.post('http://localhost:3000/borrow', {
         bookId: _id,
@@ -44,23 +45,22 @@ const BookDetails = () => {
           name: user.displayName || 'Anonymous',
           email: user.email,
         },
-        image, // Send the image along with the borrow request
+        image,
       });
-  
+
       // Update the book quantity in the database
       await axios.patch(`http://localhost:3000/books/${_id}`, {
         quantity: quantity - 1,
       });
-  
+
       console.log(`Borrowed ${name} with return date: ${returnDate}`);
+      toast.success(`Successfully borrowed "${name}"!`); // Show success toast notification
       setShowModal(false);
     } catch (error) {
       console.error('Error borrowing the book:', error);
+      toast.error('Error borrowing book. Please try again.'); // Show error toast notification
     }
   };
-  
-  
-  
 
   return (
     <div className="container mx-auto p-4">
@@ -155,6 +155,8 @@ const BookDetails = () => {
           </div>
         </div>
       )}
+      
+      <ToastContainer /> {/* Add ToastContainer for notifications */}
     </div>
   );
 };

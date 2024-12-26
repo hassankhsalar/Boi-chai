@@ -5,7 +5,7 @@ import slide3 from "../assets/3.jpg"
 
 const Banner = () => {
     return (
-        <div>
+        <div className='sm:w-10/12 md:w-9/12 lg:w-8/12 mx-auto'>
             {/* slider part start */}
             <div className="w-10/12 mx-auto">
             <div className="carousel w-full">
