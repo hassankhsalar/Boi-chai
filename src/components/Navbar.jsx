@@ -11,15 +11,26 @@ const Navbar = () => {
   useEffect(() => {
     if (user?.email) {
       fetch(`http://localhost:3000/users/${user.email}`)
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return res.json();
+        })
         .then((data) => {
-          setUserData(data);
+          // Check if data contains the expected structure
+          if (data.photoURL) {
+            setUserData(data);
+          } else {
+            console.error('User data does not contain photoURL', data);
+          }
         })
         .catch((error) => {
           console.error('Error fetching user data:', error);
         });
     }
   }, [user]);
+  
 
   const handleSignOut = () => {
     signOutUser()

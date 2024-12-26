@@ -47,6 +47,8 @@ const Login = () => {
       // Create an object with the user data you want to send to your backend
       const userData = {
         email: user.email,
+        name: user.displayName,
+        image: user.photoURL,
         // Add other fields as necessary (e.g., profile picture URL)
         // For example: profilePicture: user.photoURL,
       };
