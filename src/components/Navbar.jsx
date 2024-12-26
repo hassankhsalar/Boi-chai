@@ -3,17 +3,35 @@ import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../provider/AuthProvider';
+import axios from 'axios';
 
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
 
-  
+  useEffect(() => {
+    // Fetch user data if logged in
+    const fetchUserData = async () => {
+      if (user && user.email) {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/users/${user.email}`
+          );
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
 
   const handleSignOut = () => {
     signOutUser()
       .then(() => {
         console.log('Successfully logged out');
+        setUserData(null); // Clear user data on logout
       })
       .catch((error) => {
         console.log('Failed to log out:', error);

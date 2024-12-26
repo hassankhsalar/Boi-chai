@@ -46,12 +46,12 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     setError(''); // Clear error messages
-
+  
     try {
       // Sign in with Google using the provided context method
       await signInWithGoogle();
-
-      // Redirect to the intended page
+  
+      // Redirect to the intended page (the one they tried to access before)
       navigate(from, { replace: true });
     } catch (error) {
       setError('Failed to log in with Google. Please try again.');
