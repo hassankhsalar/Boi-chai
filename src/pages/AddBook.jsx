@@ -64,7 +64,7 @@ const AddBook = () => {
       <div className="max-w-md mx-auto p-4 bg-gray-100 rounded shadow-md">
         <h2 className="text-xl font-bold mb-4">Add a New Book</h2>
         <form onSubmit={handleSubmit}>
-          <label className="block mb-2">
+          <label className="block mb-2 mt-24">
             Image URL:
             <input
               type="text"

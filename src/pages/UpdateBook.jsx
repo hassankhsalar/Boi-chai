@@ -61,8 +61,8 @@ const UpdateBook = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
-      <label className="block mb-2">
+    <form onSubmit={handleSubmit} className="max-w-md h-screen mx-auto p-4">
+      <label className="block mt-36 mb-2">
         Image URL:
         <input
           type="text"

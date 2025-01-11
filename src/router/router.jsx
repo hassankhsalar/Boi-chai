@@ -13,6 +13,9 @@ import AddBook from "../pages/AddBook";
 import NotFound from "../pages/NotFound";
 import CategoryPage from "../pages/CategoryPage";
 import BorrowedBooks from "../pages/BorrowedBooks";
+import AboutUs from "../pages/AboutUs";
+import Contact from "../pages/Contact";
+import Jobs from "../pages/Jobs";
 
   const router = createBrowserRouter([
     {
@@ -33,7 +36,7 @@ import BorrowedBooks from "../pages/BorrowedBooks";
         },
         {
           path: '/allbooks',
-          element: <PrivateRoute><AllBooks></AllBooks></PrivateRoute>
+          element: <AllBooks></AllBooks>
         },
         {
           path: '/category/:categoryName',
@@ -55,6 +58,18 @@ import BorrowedBooks from "../pages/BorrowedBooks";
           path: '/books/:id',
           element: <PrivateRoute><BookDetails></BookDetails></PrivateRoute>,
           loader: ({ params }) => fetch(`https://boi-chai-serverside.vercel.app/books/${params.id}`)
+        },
+        {
+          path: '/aboutus',
+          element: <AboutUs/>,
+        },
+        {
+          path: '/contact',
+          element: <Contact></Contact>,
+        },
+        {
+          path: '/jobs',
+          element: <Jobs></Jobs>,
         },
       ]
     },

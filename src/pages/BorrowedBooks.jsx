@@ -50,15 +50,15 @@ const BorrowedBooks = () => {
         <title>Borrowed Books - Your Library</title>
       </Helmet>
 
-      <h1 className="text-2xl font-bold mb-4">Your Borrowed Books</h1>
+      <h1 className="text-2xl font-bold mb-4 mt-24">Your Borrowed Books</h1>
       {borrowedBooks.length === 0 ? (
         <p>No borrowed books found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {borrowedBooks.map((book) => (
-            <div key={book.bookId} className="card w-72 bg-base-100 shadow-lg compact">
+            <div key={book.bookId} className="card w-72 bg-background shadow-lg compact">
               <figure>
-                <img src={book.image} alt={book.name} className="rounded-lg h-48 w-full object-cover" />
+                <img src={book.image} alt={book.name} className="rounded-tl-lg rounded-tr-lg border-b-2 border-accent h-48 w-full object-cover" />
               </figure>
               <div className="card-body">
                 <h2 className="card-title text-lg">{book.name}</h2>
@@ -68,7 +68,7 @@ const BorrowedBooks = () => {
                 <div className="card-actions justify-end">
                   <button
                     onClick={() => handleReturnBook(book.bookId)}
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-sm bg-primary py-2 rounded-md hover:bg-primary transition hover:scale-110 hover:text-white hover:font-thin"
                   >
                     Return
                   </button>

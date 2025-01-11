@@ -1,9 +1,9 @@
-import logo from '../assets/logo.jpg';
-import { Link } from 'react-router-dom';
-import { FaUserCircle } from 'react-icons/fa';
-import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../provider/AuthProvider';
-import axios from 'axios';
+import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../provider/AuthProvider";
+import axios from "axios";
 
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
@@ -14,12 +14,13 @@ const Navbar = () => {
     const fetchUserData = async () => {
       if (user && user.email) {
         try {
+          console.log(user.email);
           const response = await axios.get(
             `https://boi-chai-serverside.vercel.app/users/${user.email}`
           );
           setUserData(response.data);
         } catch (error) {
-          console.error('Failed to fetch user data:', error);
+          console.error("Failed to fetch user data:", error);
         }
       }
     };
@@ -30,18 +31,18 @@ const Navbar = () => {
   const handleSignOut = () => {
     signOutUser()
       .then(() => {
-        console.log('Successfully logged out');
+        console.log("Successfully logged out");
         setUserData(null); // Clear user data on logout
       })
       .catch((error) => {
-        console.log('Failed to log out:', error);
+        console.log("Failed to log out:", error);
       });
   };
 
   return (
-    <div className="navbar bg-base-100 rounded-2xl">
+    <div className="navbar fixed z-10 w-11/12 bg-secondary text-text font-normal rounded-2xl">
       <div className="navbar-start">
-        <img className="w-20" src={logo} alt="Logo" />
+        <img className="w-10" src={logo} alt="Logo" />
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg
@@ -63,25 +64,52 @@ const Navbar = () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/addbook">Add Book</Link></li>
-            <li><Link to="/allbooks">All Books</Link></li>
-            <li><Link to="/borrowedbooks">Borrowed Books</Link></li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            {user && (
+              <>
+                <li>
+                  <Link to="/addbook">Add Book</Link>
+                </li>
+                <li>
+                  <Link to="/borrowedbooks">Borrowed Books</Link>
+                </li>
+              </>
+            )}
+            <li>
+              <Link to="/allbooks">All Books</Link>
+            </li>
           </ul>
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal text-base font-semibold px-1">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/addbook">Add Book</Link></li>
-          <li><Link to="/allbooks">All Books</Link></li>
-          <li><Link to="/borrowedbooks">Borrowed Books</Link></li>
+        <ul className="menu menu-horizontal text-base px-1">
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          {user && (
+            <>
+              <li>
+                <Link to="/addbook">Add Book</Link>
+              </li>
+              <li>
+                <Link to="/borrowedbooks">Borrowed Books</Link>
+              </li>
+            </>
+          )}
+          <li>
+            <Link to="/allbooks">All Books</Link>
+          </li>
         </ul>
       </div>
       <div className="navbar-end gap-3">
         {user ? (
           <>
-            <div className="tooltip tooltip-bottom" data-tip={userData?.name || user.email}>
+            <div
+              className="tooltip tooltip-bottom"
+              data-tip={userData?.name || user.email}
+            >
               {userData?.photoURL ? (
                 <img
                   src={userData.photoURL}
@@ -92,7 +120,12 @@ const Navbar = () => {
                 <FaUserCircle className="w-12 h-12" />
               )}
             </div>
-            <button onClick={handleSignOut} className="btn">Log Out</button>
+            <button
+              onClick={handleSignOut}
+              className="btn font-normal bg-primary border-b-2 border-accent hover:bg-accent hover:border-primary"
+            >
+              Log Out
+            </button>
           </>
         ) : (
           <>

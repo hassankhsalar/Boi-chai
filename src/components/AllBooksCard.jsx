@@ -1,14 +1,45 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useInView } from "react-intersection-observer";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { AuthContext } from "../provider/AuthProvider";
 
 // eslint-disable-next-line react/prop-types
 const AllBooksCard = ({ book }) => {
-  const { _id, image, name, quantity, authorName, category, shortDescription, rating } = book;
+  const { user } = useContext(AuthContext);
+
+  const {
+    _id,
+    image,
+    name,
+    quantity,
+    authorName,
+    category,
+    shortDescription,
+    rating,
+  } = book;
+
+  // Intersection Observer for animation
+  const { ref, inView } = useInView({
+    triggerOnce: true, // Trigger animation only once
+    threshold: 0.2, // Trigger when 20% of the card is visible
+  });
 
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
-      {/* Book Image */}
-      <img className="w-full h-48 object-cover" src={image} alt={name} />
+    <div
+      ref={ref}
+      className={`max-w-sm flex flex-col justify-between rounded-xl overflow-hidden shadow-lg bg-background transition-transform duration-1000 ease-out ${
+        inView ? "scale-100 opacity-100" : "scale-90 opacity-0"
+      }`}
+    >
+      {/* Lazy-loaded Book Image */}
+      <LazyLoadImage
+        src={image}
+        alt={name}
+        effect="blur"
+        className="w-96 h-48 object-cover"
+      />
 
       {/* Card Content */}
       <div className="p-6">
@@ -33,12 +64,14 @@ const AllBooksCard = ({ book }) => {
       </div>
 
       {/* Footer */}
-      <div className="p-4 bg-gray-100">
-        <Link to={`/update-book/${_id}`}>
-          <button className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition">
-            Update Book
-          </button>
-        </Link>
+      <div className="p-4">
+        {user && (
+          <Link to={`/update-book/${_id}`}>
+            <button className="w-full bg-accent text-white py-2 rounded-md hover:bg-primary transition hover:scale-105">
+              Update Book
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );
