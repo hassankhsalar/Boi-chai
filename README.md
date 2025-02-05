@@ -1,3 +1,8 @@
+
+## Screenshots
+
+![App Screenshot](https://i.ibb.co.com/5Wkf3Mbx/Screenshot-2025-01-10-225524.png)
+
 # Frontend - Book Borrowing Platform
 
 This is the frontend for a web-based Book Borrowing Platform, built using **React**. The platform allows users to explore a collection of books, borrow books, and manage their borrowed book list.
