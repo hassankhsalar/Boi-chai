@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import AllBooksCard from '../components/AllBooksCard';
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet-async";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const AllBooks = () => {

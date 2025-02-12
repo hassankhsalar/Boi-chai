@@ -9,6 +9,8 @@ import { Parallax, Pagination, Navigation } from "swiper/modules";
 const About = () => {
   return (
     <div className="w-10/12 mx-auto">
+      <h2 className="text-4xl text-center font-bold text-accent mb-4">About Boi-Chai</h2>
+
       <Swiper
         style={{
           '--swiper-navigation-color': '#0e110d',
@@ -21,7 +23,7 @@ const About = () => {
         }}
         navigation={true}
         modules={[Parallax, Pagination, Navigation]}
-        className="mySwiper"
+        className="mySwiper text-black dark:text-black"
       >
         <div
           slot="container-start"

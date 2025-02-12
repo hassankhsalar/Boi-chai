@@ -17,13 +17,14 @@ const Testimonials = () => {
   }, []);
 
   return (
-    <section className="my-20">
+    <section className="my-10">
+      <h2 className="text-4xl pt-4 bg-transparent dark:bg-slate-800 text-center font-bold text-yellow-500 underline">Reviews</h2>
       <div>
     
         <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
           {reviews.map((review) => (
             <SwiperSlide key={review._id}>
-              <div className="m-24 space-y-2 flex flex-col items-center">
+              <div className="m-20 space-y-2 flex flex-col items-center">
                 <Rating
                   style={{ maxWidth: 180 }}
                   value={review.rating}

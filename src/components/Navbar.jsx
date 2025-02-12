@@ -4,10 +4,23 @@ import { FaUserCircle } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 import axios from "axios";
+import { FaMoon, FaSun } from "react-icons/fa6";
 
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
+  // State to track theme
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme); // Save preference
+  }, [theme]);
+
+  // Toggle function
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   useEffect(() => {
     // Fetch user data if logged in
@@ -40,7 +53,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar fixed z-10 w-11/12 bg-secondary text-text font-normal rounded-2xl">
+    <div className="navbar fixed z-10 w-full bg-secondary text-text font-normal px-6 md:px-20 2xl:px-24">
       <div className="navbar-start">
         <img className="w-10" src={logo} alt="Logo" />
         <div className="dropdown">
@@ -67,6 +80,19 @@ const Navbar = () => {
             <li>
               <Link to="/">Home</Link>
             </li>
+            <li>
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full bg-neutral-200 dark:bg-neutral-800 transition duration-300"
+              >
+                {theme === "light" ? (
+                  <FaMoon className="text-lg text-gray-800 dark:text-white" />
+                ) : (
+                  <FaSun className="text-lg text-yellow-500" />
+                )}
+              </button>
+            </li>
             {user && (
               <>
                 <li>
@@ -84,21 +110,34 @@ const Navbar = () => {
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal text-base px-1">
-          <li>
+        <ul className="menu menu-horizontal text-base px-1 gap-4 2xl:gap-10">
+          <li className="hover:scale-105 hover:text-white hover:border-white border-b-2 rounded-xl border-accent ">
             <Link to="/">Home</Link>
           </li>
+          <li>
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full bg-neutral-200 dark:bg-neutral-800 transition duration-300"
+              >
+                {theme === "light" ? (
+                  <FaMoon className="text-lg text-gray-800 dark:text-white" />
+                ) : (
+                  <FaSun className="text-lg text-yellow-500" />
+                )}
+              </button>
+            </li>
           {user && (
             <>
-              <li>
+              <li className="hover:scale-105 hover:text-white hover:border-white border-b-2 rounded-xl border-accent ">
                 <Link to="/addbook">Add Book</Link>
               </li>
-              <li>
+              <li className="hover:scale-105 hover:text-white hover:border-white border-b-2 rounded-xl border-accent ">
                 <Link to="/borrowedbooks">Borrowed Books</Link>
               </li>
             </>
           )}
-          <li>
+          <li className="hover:scale-105 hover:text-white hover:border-white border-b-2 rounded-xl border-accent ">
             <Link to="/allbooks">All Books</Link>
           </li>
         </ul>
@@ -129,12 +168,15 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <div className="flex items-center gap-4">
-              <FaUserCircle className="w-full h-full" />
+            <div className="flex items-center">
+              <FaUserCircle className="w-10 h-10 text-accent" />
             </div>
             <div className="flex gap-3">
-              <Link to="/register">Register</Link>
-              <Link to="/login">Login</Link>
+              <Link to="/login">
+                <button className="btn bg-accent hover:scale-110 hover:text-white">
+                  Login
+                </button>
+              </Link>
             </div>
           </>
         )}

@@ -1,10 +1,11 @@
 import React from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Banner from "../components/Banner";
 import CategoryCard from "../components/CategoryCard";
 import Faq from "../components/Faq";
 import About from "../components/About";
 import Testimonials from "../components/Testimonials";
+import CommunityForums from "./CommunityForums";
 
 const categories = [
   { name: "Novel", description: "Explore various novel books." },
@@ -48,6 +49,9 @@ const Home = () => {
           {/* reviews */}
           <div className="w-full bg-background rounded-2xl my-8">
           <Testimonials/>
+          </div>
+          <div>
+            <CommunityForums></CommunityForums>
           </div>
           
 
