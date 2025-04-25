@@ -6,6 +6,7 @@ import Faq from "../components/Faq";
 import About from "../components/About";
 import Testimonials from "../components/Testimonials";
 import CommunityForums from "./CommunityForums";
+import CallToAction from "./CallToAction";
 
 const categories = [
   { name: "Novel", description: "Explore various novel books." },
@@ -53,6 +54,9 @@ const Home = () => {
           <div>
             <CommunityForums></CommunityForums>
           </div>
+
+          {/* call to action */}
+              <CallToAction></CallToAction>
           
 
           {/* Extra sections */}
